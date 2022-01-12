@@ -41,14 +41,27 @@ apiRoute.get(bodyParser.json(), async (req, res) => {
 	console.log(req.query.id)
 
 	try {
-		const result = await s3
-			.getObject({
+		const objHead = await s3
+			.headObject({
 				Bucket: "cmpe48a-project",
 				Key: req.query.id as string,
 			})
 			.promise()
-		// delete result.Body
-		res.status(200).json({ data: "success", result })
+		console.log(objHead)
+
+		const filename = objHead.Metadata?.originalname
+		const contentType = objHead.ContentType as string
+		s3.getObject({
+			Bucket: "cmpe48a-project",
+			Key: req.query.id as string,
+		})
+			.createReadStream()
+			// https://stackoverflow.com/questions/35386749/how-download-a-file-from-amazon-s3-with-express-js-and-request-js/35386796#35386796
+			.pipe(
+				res
+					.setHeader("Content-Type", contentType)
+					.setHeader("Content-Disposition", `inline; filename="${filename}"`)
+			)
 	} catch (error) {
 		console.error(error)
 		res.status(500).json({ data: "error", error })

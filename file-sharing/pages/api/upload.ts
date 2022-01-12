@@ -37,7 +37,9 @@ const apiRoute = nextConnect<NextApiRequest, NextApiResponse>({
 
 apiRoute.post(upload.array("theFiles"), async (req, res) => {
 	console.log(Date.now())
-
+	console.log(req.files)
+	if (req.files?.length == 0)
+		return res.json({ error: "error", files: req.files })
 	const hashSum = crypto.createHash("sha256")
 	hashSum.update(req.files[0].buffer)
 
