@@ -12,15 +12,6 @@ var s3 = new aws.S3({
   secretAccessKey: process.env.secretAccessKey,
 });
 
-const upload = multer({
-  storage: memoryStorage(),
-
-  // multer.diskStorage({
-  // 	destination: "./public/uploads",
-  // 	filename: (req, file, cb) => cb(null, file.originalname),
-  // }),
-});
-
 const apiRoute = nextConnect<NextApiRequest, NextApiResponse>({
   onError(error, req, res) {
     console.error(error);
@@ -33,8 +24,6 @@ const apiRoute = nextConnect<NextApiRequest, NextApiResponse>({
     res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
   },
 });
-
-// apiRoute.use()
 
 apiRoute.get(bodyParser.json(), async (req, res) => {
   console.log(Date.now());

@@ -13,11 +13,6 @@ var s3 = new aws.S3({
 
 const upload = multer({
   storage: memoryStorage(),
-
-  // multer.diskStorage({
-  // 	destination: "./public/uploads",
-  // 	filename: (req, file, cb) => cb(null, file.originalname),
-  // }),
 });
 
 const apiRoute = nextConnect<NextApiRequest, NextApiResponse>({
@@ -33,11 +28,8 @@ const apiRoute = nextConnect<NextApiRequest, NextApiResponse>({
   },
 });
 
-// apiRoute.use()
-
 apiRoute.post(upload.array("theFiles"), async (req, res) => {
   console.log(Date.now());
-  console.log(req.files);
   if (!req.files || !(req.files && (req.files as any)[0]))
     return res.json({ error: "error", files: req.files });
   const hashSum = crypto.createHash("sha256");
